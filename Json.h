@@ -11,7 +11,9 @@
 #include <map>
 #include <vector>
 #include <comdef.h>
+
 using namespace std;
+
 // forward declaration of json value
 class JSONVALUE;
 
@@ -262,7 +264,7 @@ public:
 	bool isNull();
 	bool isMember(const wchar_t* pos);
 	LPCTSTR asCString();
-	static void Unescape(const wchar_t *src,CString& dest);
+	static void Unescape(const wchar_t *src, std::wstring& dest);
 	wstring asString();
 	int asInt();
 	double asDouble();
@@ -289,7 +291,7 @@ protected:
 	const wchar_t* FormatString(wstring &sz, const wstring &szSrc, const DWORD nFlag, const bool bName);
 	const wchar_t* TrimString(wstring& sz, const int nLR);
 	bool IsHexChar(const wchar_t c);
-	const wchar_t* EscapeChar(const wchar_t c, const wchar_t cQuote);
+	const wchar_t* EscapeChar(const wchar_t& c, const wchar_t cQuote);
 	wchar_t UnescapeChar(const wstring& sz);
 	int UnescapeString(wstring& sz);
 	const wchar_t* ConvertAW(wstring& dest, const char* src, const UINT srccp = CP_ACP, const bool bRemoveBom = true);

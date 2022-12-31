@@ -6,7 +6,6 @@
  * Dual licensed under the MIT or GPL Version 2 licenses.
  */
 
-#include "StdAfx.h"
 #include "Json.h"
 #include <float.h>
 
@@ -777,7 +776,7 @@ bool JSONVALUE::isMember(const wchar_t* pos)
 	JSONVALUE j(JT_UNDEFINED);
 	return At(pos,j);
 }
-void JSONVALUE::Unescape(const wchar_t *src,CString& dest)
+void JSONVALUE::Unescape(const wchar_t *src, std::wstring& dest)
 {
 	size_t nSize = wcslen(src);
 	wchar_t* lpszBuf = new wchar_t[nSize + 1];
@@ -795,7 +794,7 @@ void JSONVALUE::Unescape(const wchar_t *src,CString& dest)
 			lpszBuf[i++] = *src++;
 	}
 	lpszBuf[i] = 0;
-	dest.Format(_T("%s"),lpszBuf);
+	dest = lpszBuf;
 	delete [] lpszBuf;
 }
 LPCTSTR JSONVALUE::asCString()
@@ -847,7 +846,7 @@ int ParseJsonFile(LPCTSTR fileName,JSONVALUE& jVal)
 {
 	FILE* fin=NULL;
 	//¶ÁÈ¡²¢ÅÐ¶ÏBOM
-	_wfopen_s(&fin,fileName,_T("rb"));
+	_wfopen_s(&fin,fileName, L"rb");
 	if (fin==NULL)
 		return -1;
 	BYTE* buf[2];
@@ -864,7 +863,7 @@ int ParseJsonFile(LPCTSTR fileName,JSONVALUE& jVal)
 	}
 	else
 		iUnicode=0;
-	_wfopen_s(&fin,fileName,_T("r,ccs=UNICODE"));
+	_wfopen_s(&fin,fileName, L"r,ccs=UNICODE");
 	fseek(fin,iUnicode,SEEK_SET);
 	char* szBuf=new char[nFileLen];
 	memset(szBuf,0,nFileLen);
@@ -1967,7 +1966,7 @@ const wchar_t* JSONVALUE::FormatString(wstring &sz, const wstring &szSrc, const 
 		bHasWhiteSpace = (wstring::npos != szSrc.find_first_of(L"\b\t\n\v\f\r "));	// 0x08-0x0d, 0x20
 	// KHW, 2012-09-03, JSON key must be quoted is contain any one of the non-alpha values below
 	if (bName)
-		bHasWhiteSpace |= (wstring::npos != szSrc.find_first_of(L"~`!@#$%^&*()-_+={}[]|\\:;<>,.?\/"));
+		bHasWhiteSpace |= (wstring::npos != szSrc.find_first_of(L"~`!@#$%^&*()-_+={}[]|\\:;<>,.?/"));
 
 	wchar_t cQuote = wchar_t('"');			// default to strict mode output
 	if (szSrc.empty()) {
@@ -2014,7 +2013,7 @@ const wchar_t* JSONVALUE::FormatString(wstring &sz, const wstring &szSrc, const 
 	return (wchar_t*)sz.c_str();
 }
 
-const wchar_t* JSONVALUE::EscapeChar(const wchar_t c, const wchar_t cQuote)
+const wchar_t* JSONVALUE::EscapeChar(const wchar_t& c, const wchar_t cQuote)
 {
 	switch (c) {
 		case wchar_t('"'):	return (wchar_t('\'') == cQuote) ? L"\"" : L"\\\"";
@@ -2026,7 +2025,7 @@ const wchar_t* JSONVALUE::EscapeChar(const wchar_t c, const wchar_t cQuote)
 		case wchar_t('\t'):	return L"\\t";
 		// default return the character
 	//	case wchar_t('/'):	return L"/";
-		default:			return (wchar_t*)&c;
+		default: return (wchar_t*)&c;
 	}
 }
 
@@ -2332,7 +2331,7 @@ bool JSONVALUE::ToIsoTime(wstring& dest, const DATE src, const DWORD dwOption)
 
 	if (HasFlag(JSON_DATEFORMAT_DATE, dwOption)) {
 		#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-		swprintf_s(sTemp, 24, L"%04d-%02d-%02d ",
+		swprintf_s(sTemp, 24, L"%04d-%02d-%02d %02d:%02d:%02d",
 			sdt.wYear, sdt.wMonth, sdt.wDay,
 			sdt.wHour, sdt.wMinute, sdt.wSecond);
 		#else
