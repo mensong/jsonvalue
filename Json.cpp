@@ -786,7 +786,7 @@ void JSONVALUE::Unescape(const wchar_t *src, std::wstring& dest)
 		if ('\\' == src[0] && 'u' == src[1])
 		{
 			wchar_t cSave[4];
-			wcsncpy(cSave,src + 2,4);
+			wcsncpy_s(cSave, src + 2, 4);
 			lpszBuf[i++] = wcstoul(cSave, NULL, 16);
 			src += 6;
 		}

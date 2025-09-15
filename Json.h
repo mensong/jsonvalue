@@ -115,14 +115,14 @@ typedef struct JSONFORMAT {
 	DWORD nIndentLevel;				// formatting
 	DWORD nIndentSpace;				// number of space character to use as indent if JSON_FLAG_PRETTYPRINTSPACE
 	int nDecimalPoint;				// number of decimal point for floating point
-	wchar_t* szNumberFormat;		// floting point formatting
+	wchar_t szNumberFormat[10];		// floting point formatting
 	DWORD nDateFormat;				// date formatting
 
 	JSONFORMAT() {
 		nIndentLevel = 0;
 		nIndentSpace = 2;
 		nDecimalPoint = 2;
-		szNumberFormat = L"%.*f";
+		lstrcpy(szNumberFormat, L"%.*f");
 		nDateFormat = JSON_DATEFORMAT_DATE | JSON_DATEFORMAT_TIME;
 	};
 
